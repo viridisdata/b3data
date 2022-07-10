@@ -17,7 +17,7 @@ HTTP_HEADERS = {
 }
 
 
-def parse_dates(date_range: str) -> list[DateTuple]:
+def expand_date_range(date_range: str) -> list[DateTuple]:
     dates = []
     start, end = sorted(date_range.split(":"))
 
@@ -53,6 +53,24 @@ def parse_dates(date_range: str) -> list[DateTuple]:
             dates.append((date.year, date.month, date.day))
             date += dt.timedelta(days=1)
     return dates
+
+
+def parse_dates(dates_string: str) -> list[DateTuple]:
+    if ":" in dates_string:
+        return expand_date_range(dates_string)
+    year_match = re.match(r"^\d{4}$", dates_string)
+    month_match = re.match(r"^\d{4}-\d{2}$", dates_string)
+    day_match = re.match(r"^\d{4}-\d{2}-\d{2}$", dates_string)
+    year = month = day = None
+    if year_match:
+        year = int(dates_string)
+    elif month_match:
+        year, month = dates_string.split("-")
+        year, month = int(year), int(month)
+    elif day_match:
+        year, month, day = dates_string.split("-")
+        year, month, day = int(year), int(month), int(day)
+    return [(year, month, day)]
 
 
 def get_parser():
