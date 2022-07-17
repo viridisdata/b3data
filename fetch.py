@@ -90,7 +90,11 @@ def main():
 
     for date in dates:
         try:
-            fetch_data_file(datadir=output, datetuple=date, client=client)
+            fetch_data_file(
+                datadir=output,
+                datetuple=date,
+                client=client,
+            )
         except InvalidDate:
             print(f"Invalid date: {date}")
         except httpx.HTTPStatusError:
