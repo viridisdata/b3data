@@ -3,4 +3,5 @@ build/
 dist/
 *.egg-info/
 
-.venv/
+# Poetry
+poetry.lock
