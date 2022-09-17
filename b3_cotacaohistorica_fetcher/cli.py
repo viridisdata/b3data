@@ -52,6 +52,9 @@ def parse_dates(dates_string: str) -> list[DateTuple]:
     if dates_string == "today":
         now = dt.datetime.now(zoneinfo.ZoneInfo("America/Sao_Paulo"))
         return [(now.year, now.month, now.day)]
+    if dates_string == "yesterday":
+        now = dt.datetime.now(zoneinfo.ZoneInfo("America/Sao_Paulo"))
+        return [(now.year, now.month, now.day - 1)]
     year_match = re.match(r"^\d{4}$", dates_string)
     month_match = re.match(r"^\d{4}-\d{2}$", dates_string)
     day_match = re.match(r"^\d{4}-\d{2}-\d{2}$", dates_string)
