@@ -4,7 +4,6 @@ from pathlib import Path
 import httpx
 from tqdm import tqdm
 
-from .config import HTTP_HEADERS
 from .dates import DateTuple, InvalidDate, valid_date
 
 
@@ -87,8 +86,8 @@ def fetch_data_file(
     progress.close()
 
 
-def fetch_dates(dates, output):
-    client = httpx.Client(headers=HTTP_HEADERS, verify=False)
+def fetch_dates(dates, output, http_headers=None):
+    client = httpx.Client(headers=http_headers, verify=False)
     for date in dates:
         try:
             fetch_data_file(

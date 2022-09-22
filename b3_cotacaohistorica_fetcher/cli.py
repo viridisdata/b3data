@@ -4,7 +4,6 @@ import re
 import zoneinfo
 from pathlib import Path
 
-from .config import DEFAULT_OUTPUT_DIR
 from .dates import DateTuple
 
 
@@ -77,7 +76,7 @@ def get_args():
         "--ouput",
         dest="output",
         type=Path,
-        default=DEFAULT_OUTPUT_DIR,
+        default=Path("data"),
     )
     parser.add_argument("dates", help="start:end")
     args = parser.parse_args()
