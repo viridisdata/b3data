@@ -6,7 +6,6 @@ authors = ["Daniel Komesu <danielkomesu@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-tqdm = "^4.64.0"
 httpx = "^0.23.0"
 
 [tool.poetry.dev-dependencies]

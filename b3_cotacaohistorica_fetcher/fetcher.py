@@ -2,7 +2,6 @@ import datetime as dt
 from pathlib import Path
 
 import httpx
-from tqdm import tqdm
 
 from .dates import DateTuple, InvalidDate, valid_date
 
@@ -42,48 +41,38 @@ def get_dest_filepath(
 def fetch_data_file(
     datadir: Path,
     datetuple: DateTuple,
-    client: httpx.Client = None,
+    client: httpx.Client,
     blocksize: int = 8192,
 ) -> None:
     if not valid_date(datetuple):
         raise InvalidDate(f"Invalid date {datetuple}")
     year, month, day = datetuple
     url = get_url(datetuple)
-    if client is not None:
-        r = client.get(url)
-    else:
-        r = httpx.get(url, verify=False)
 
+    # Get Metadata ------------------------------------------------------------
+    r = client.head(url)
     if r.status_code != 200:
         print(f"Error fetching {url}: {r.status_code}")
         r.raise_for_status()
-    elif r.headers.get("content-type") != "application/x-zip-compressed":
+    elif r.headers.get("Content-Type") != "application/x-zip-compressed":
         error_msg = f"Error fetching {url}: {r.headers.get('content-type')}"
         raise Exception(error_msg)
-
-    file_size = int(r.headers.get("content-length", 0))
-    modified = r.headers.get("last-modified")
+    file_size = int(r.headers.get("Content-Length", 0))
+    modified = r.headers.get("Last-Modified")
     if modified:
         modified = dt.datetime.strptime(modified, "%a, %d %b %Y %H:%M:%S %Z")
 
-    # Destination file path
+    # Destination file path ---------------------------------------------------
     dest_filepath = get_dest_filepath(datadir, datetuple, modified)
     if dest_filepath.exists():
         return
-    elif not dest_filepath.parent.exists():
-        dest_filepath.parent.mkdir(parents=True)
+    dest_filepath.parent.mkdir(parents=True, exist_ok=True)
 
-    progress = tqdm(
-        total=file_size,
-        unit="B",
-        unit_scale=True,
-        desc=f"{dest_filepath.name}",
-    )
-    with open(dest_filepath, "wb") as f:
-        for chunk in r.iter_bytes(blocksize):
-            f.write(chunk)
-            progress.update(len(chunk))
-    progress.close()
+    # Actual download ---------------------------------------------------------
+    with client.stream("GET", url) as r:
+        with open(dest_filepath, "wb") as f:
+            for chunk in r.iter_bytes(blocksize):
+                f.write(chunk)
 
 
 def fetch_dates(dates, output, http_headers=None):
