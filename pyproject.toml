@@ -1,11 +1,11 @@
 [tool.poetry]
 name = "b3-cotacaohistorica-fetcher"
-version = "0.1.0"
-description = "Fetcher for B3 cotação histórica raw data"
+version = "0.1.1"
+description = "Coletor de dados de cotação histórica da B3"
 authors = ["Daniel Komesu <danielkomesu@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10"
 httpx = "^0.23.0"
 
 [tool.poetry.dev-dependencies]
