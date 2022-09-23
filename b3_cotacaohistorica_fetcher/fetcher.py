@@ -89,6 +89,7 @@ def fetch_data_file(
                 downloaded_size += len(chunk)
                 perc = (downloaded_size / file_size) * 100
                 sys.stdout.write(
+                    f"Downloading {dest_filepath.name} | ",
                     f"{downloaded_size/10**6:.2f} MB "
                     f"of {str_file_size} "
                     f"[{perc: >6.2f}%]\r"
