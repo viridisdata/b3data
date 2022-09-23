@@ -24,12 +24,14 @@ def get_url(datetuple: DateTuple) -> str:
 def get_filename(datetuple: DateTuple, modified: dt.datetime = None) -> str:
     year, month, day = datetuple
     dataset_name = "cotacaohistorica"
+    str_modified = f"{modified:%Y%m%d%H%M}"
     if month is None:
-        return f"{dataset_name}_{year}_{modified:%Y%m%d}.zip"
+        str_date = f"{year}"
     elif day is None:
-        return f"{dataset_name}_{year}{month:02}_{modified:%Y%m%d}.zip"
+        str_date = f"{year}{month:02}"
     else:
-        return f"{dataset_name}_{year}{month:02}{day:02}_{modified:%Y%m%d}.zip"
+        str_date = f"{year}{month:02}{day:02}"
+    return f"{dataset_name}_{str_date}_{str_modified}.zip"
 
 
 def get_dest_filepath(
