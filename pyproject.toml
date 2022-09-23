@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "b3-cotacaohistorica-fetcher"
-version = "0.1.1"
+version = "0.1.2"
 description = "Coletor de dados de cotação histórica da B3"
 authors = ["Daniel Komesu <danielkomesu@gmail.com>"]
 
