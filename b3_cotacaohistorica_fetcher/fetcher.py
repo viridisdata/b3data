@@ -49,7 +49,6 @@ def fetch_data_file(
 ) -> None:
     if not valid_date(datetuple):
         raise InvalidDate(f"Invalid date {datetuple}")
-    year, month, day = datetuple
     url = get_url(datetuple)
 
     # Get Metadata ------------------------------------------------------------
