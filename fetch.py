@@ -1,6 +1,5 @@
 import argparse
 import datetime as dt
-import logging
 import re
 import zoneinfo
 from pathlib import Path
@@ -90,16 +89,6 @@ def get_args():
 
 def main():
     args = get_args()
-    logger = logging.getLogger("b3_cotacaohistorica_fetcher")
-    streamhandler = logging.StreamHandler()
-    streamformatter = logging.Formatter(
-        "%(asctime)s %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
-    streamhandler.setFormatter(streamformatter)
-    streamhandler.setLevel(logging.INFO)
-    logger.addHandler(streamhandler)
-    logger.setLevel(logging.INFO)
     dates = args["dates"]
     output = args["output"]
     fetch_dates(dates, output)

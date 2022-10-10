@@ -1,13 +1,10 @@
 import datetime as dt
-import logging
 import sys
 from pathlib import Path
 
 import httpx
 
 from .dates import DateTuple, InvalidDate, valid_date
-
-logger = logging.getLogger(__name__)
 
 
 def get_url(datetuple: DateTuple) -> str:
@@ -75,12 +72,6 @@ def fetch_data_file(
     dest_filepath.parent.mkdir(parents=True, exist_ok=True)
 
     str_file_size = f"{file_size/10**6:.2f} MB"
-
-    logger.info(
-        f"Downloading file {url} -> {dest_filepath}\n"
-        f"File size: {str_file_size}\n"
-        f"Timestamp: {modified:%Y-%m-%d %H:%M}"
-    )
 
     # Actual download ---------------------------------------------------------
     downloaded_size = 0
