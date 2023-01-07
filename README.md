@@ -1,3 +1,3 @@
-# B3's cotação histórica raw data fetcher
+# B3's cotação histórica
 
-Source: [B3](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/)
+Data Source: [B3](https://www.b3.com.br/pt_br/market-data-e-indices/servicos-de-dados/market-data/historico/mercado-a-vista/series-historicas/)

@@ -4,10 +4,6 @@ import re
 DateTuple = tuple[int]
 
 
-class InvalidDate(Exception):
-    pass
-
-
 def carnaval_date(year: int) -> tuple[dt.date]:
     # https://www.vivaolinux.com.br/script/Calcular-a-data-do-Carnaval-e-da-Pascoa
     x = 24
@@ -17,7 +13,7 @@ def carnaval_date(year: int) -> tuple[dt.date]:
     c = year % 7
     d = (19 * a + x) % 30
     e = (2 * b + 4 * c + 6 * d + y) % 7
-    if ((d + e) > 9):
+    if (d + e) > 9:
         day = d + e - 9
         pascoa = dt.date(year, 4, day)
         month = 4
@@ -66,12 +62,12 @@ def valid_date(datetuple: DateTuple) -> bool:
     weekday = date.weekday()
     is_workday = weekday != 5 and weekday != 6
     brazillian_holidays = (
-        dt.date(year, 1, 1),    # 1 de janeiro (Ano novo)
-        dt.date(year, 4, 21),   # 21 de abril (Tiradentes)
-        dt.date(year, 5, 1),    # 1 de maio (Dia do Trabalhador)
-        dt.date(year, 9, 7),    # 7 de setembro (Dia da Independência)
+        dt.date(year, 1, 1),  # 1 de janeiro (Ano novo)
+        dt.date(year, 4, 21),  # 21 de abril (Tiradentes)
+        dt.date(year, 5, 1),  # 1 de maio (Dia do Trabalhador)
+        dt.date(year, 9, 7),  # 7 de setembro (Dia da Independência)
         dt.date(year, 10, 12),  # 12 de outubro (Nossa Senhora Aparecida)
-        dt.date(year, 11, 2),   # 2 de novembro (Dia do Finados)
+        dt.date(year, 11, 2),  # 2 de novembro (Dia do Finados)
         dt.date(year, 11, 15),  # 15 de novembro (Proclamação da República)
         dt.date(year, 12, 25),  # 25 de dezembro (Natal)
     )
@@ -89,12 +85,7 @@ def expand_date_range(date_range: str) -> list[DateTuple]:
 
     if yearly_match:
         start, end = int(start), int(end)
-        dates.extend(
-            [
-                (year, None, None)
-                for year in range(start, end + 1)
-            ]
-        )
+        dates.extend([(year, None, None) for year in range(start, end + 1)])
     elif monthly_match:
         start_year, start_month = start.split("-")
         end_year, end_month = end.split("-")
@@ -102,9 +93,9 @@ def expand_date_range(date_range: str) -> list[DateTuple]:
         end_year, end_month = int(end_year), int(end_month)
         for year in range(start_year, end_year + 1):
             for month in range(1, 13):
-                if (month < start_month and year == start_year):
+                if month < start_month and year == start_year:
                     continue
-                elif (month > end_month and year == end_year):
+                elif month > end_month and year == end_year:
                     continue
                 dates.append((year, month, None))
     elif daily_match:
