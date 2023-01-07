@@ -43,7 +43,7 @@ def get_dest_filepath(
     return datadir / f"{year}" / filename
 
 
-def get_file_metadata(datetuple: DateTuple, client: httpx.Client):
+def get_resource_metadata(datetuple: DateTuple, client: httpx.Client):
     # Get URL
     url = get_url(datetuple)
 
@@ -82,12 +82,8 @@ def fetch_data_file(
     url = get_url(datetuple)
 
     # Get Metadata ------------------------------------------------------------
-    file_metadata = get_file_metadata(
-        datadir=datadir,
-        datetuple=datetuple,
-        client=client,
-    )
-    modified = file_metadata["modified"]
+    metadata = get_resource_metadata(datetuple=datetuple, client=client)
+    modified = metadata["modified"]
 
     # Destination file path ---------------------------------------------------
     dest_filepath = get_dest_filepath(datadir, datetuple, modified)
