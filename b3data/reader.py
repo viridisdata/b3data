@@ -73,25 +73,54 @@ def read_registro99():
     return df
 
 
-def read_codbdi():
+def read_codbdi(rename_columns: bool = False):
     with resources.path("b3data.auxiliary_tables", "codbdi.csv") as filepath:
         df = pd.read_csv(filepath)
+    if rename_columns:
+        df = df.rename(
+            columns={
+                "CODBDI": "bdi_id",
+                "DESCRIÇÃO": "bdi",
+            },
+        )
     return df
 
 
-def read_especi():
+def read_especi(rename_columns: bool = False):
     with resources.path("b3data.auxiliary_tables", "especi.csv") as filepath:
         df = pd.read_csv(filepath)
+    if rename_columns:
+        df = df.rename(
+            columns={
+                "ESPECI": "especificacao_id",
+                "DESCRIÇÃO": "especificacao",
+            },
+        )
     return df
 
 
-def read_indopc():
+def read_indopc(rename_columns: bool = False):
     with resources.path("b3data.auxiliary_tables", "indopc.csv") as filepath:
         df = pd.read_csv(filepath)
+    if rename_columns:
+        df = df.rename(
+            columns={
+                "INDOPC": "indice_correcao_id",
+                "SÍMBOLO": "simbolo",
+                "DESCRIÇÃO": "indice_correcao",
+            },
+        )
     return df
 
 
-def read_tpmerc():
+def read_tpmerc(rename_columns: bool = False):
     with resources.path("b3data.auxiliary_tables", "tpmerc.csv") as filepath:
         df = pd.read_csv(filepath)
+    if rename_columns:
+        df = df.rename(
+            columns={
+                "TPMERC": "tipo_mercado_id",
+                "DESCRIÇÃO": "tipo_mercado",
+            },
+        )
     return df
