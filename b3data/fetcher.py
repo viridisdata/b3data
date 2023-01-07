@@ -43,27 +43,51 @@ def get_dest_filepath(
     return datadir / f"{year}" / filename
 
 
-def fetch_data_file(
-    datadir: Path,
-    datetuple: DateTuple,
-    client: httpx.Client,
-    blocksize: int = 8192,
-) -> None:
-    if not valid_date(datetuple):
-        raise ValueError(f"Invalid date {datetuple}")
+def get_file_metadata(datetuple: DateTuple, client: httpx.Client):
+    # Get URL
     url = get_url(datetuple)
 
     # Get Metadata ------------------------------------------------------------
     r = client.head(url)
+
     if r.status_code != 200:
         print(f"Error fetching {url}: {r.status_code}")
         r.raise_for_status()
     elif r.headers.get("Content-Type") != "application/x-zip-compressed":
         error_msg = f"Error fetching {url}: {r.headers.get('content-type')}"
         raise Exception(error_msg)
+
+    size = int(r.headers.get("Content-Length", 0))
+
     modified = r.headers.get("Last-Modified")
     if modified:
         modified = dt.datetime.strptime(modified, "%a, %d %b %Y %H:%M:%S %Z")
+
+    return {
+        "url": url,
+        "modified": modified,
+        "size": size,
+    }
+
+
+def fetch_data_file(
+    datadir: Path,
+    datetuple: DateTuple,
+    client: httpx.Client,
+    blocksize: int = 8192,
+) -> Path:
+    # Check if date is valid
+    if not valid_date(datetuple):
+        raise ValueError(f"Invalid date {datetuple}")
+    url = get_url(datetuple)
+
+    # Get Metadata ------------------------------------------------------------
+    file_metadata = get_file_metadata(
+        datadir=datadir,
+        datetuple=datetuple,
+        client=client,
+    )
+    modified = file_metadata["modified"]
 
     # Destination file path ---------------------------------------------------
     dest_filepath = get_dest_filepath(datadir, datetuple, modified)
@@ -76,6 +100,8 @@ def fetch_data_file(
         with open(dest_filepath, "wb") as f:
             for chunk in r.iter_bytes(blocksize):
                 f.write(chunk)
+
+    return dest_filepath
 
 
 def fetch_dates(
