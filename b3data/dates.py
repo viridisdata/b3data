@@ -1,5 +1,6 @@
 import datetime as dt
 import re
+from functools import lru_cache
 from typing import Generator
 
 from dateutil.relativedelta import relativedelta
@@ -7,6 +8,7 @@ from dateutil.relativedelta import relativedelta
 DateTuple = tuple[int]
 
 
+@lru_cache
 def get_year_holidays(year: int) -> dt.date:
     brazilian_holidays = (
         dt.date(year, 1, 1),  # 1 de janeiro (Ano novo)
@@ -76,82 +78,69 @@ def valid_date(datetuple: DateTuple) -> bool:
     if day is None:
         return True
     date = dt.date(year, month, day)
-    weekday = date.weekday()
-    is_workday = weekday != 5 and weekday != 6
+    if date.weekday() in (5, 6):
+        return False
     is_holiday = any(date == holiday for holiday in get_year_holidays(year))
-    return is_workday and not is_holiday
+    return not is_holiday
 
 
-def date_range(start: DateTuple, end: DateTuple) -> Generator[DateTuple, None, None]:
-    match start, end:
-        case (int(), None, None), (int(), None, None):  # dates are yearly
-            start_date = dt.date(start[0], 1, 1)
-            end_date = dt.date(end[0], 1, 1)
-            date = start_date
-            while date <= end_date:
-                datetuple = (date.year, None, None)
-                yield datetuple
-                date += dt.timedelta(year=1)
-
-        case (int(), int(), None), (int(), int(), None):  # dates are monthly
-            start_date = dt.date(start[0], start[1], 1)
-            end_date = dt.date(end[0], end[1], 1)
-            date = start_date
-            while date <= end_date:
-                datetuple = (date.year, date.month, None)
-                yield datetuple
-                date += relativedelta(months=+1)
-
-        case (int(), int(), int()), (int(), int(), int()):  # dates are daily
-            start_date = dt.date(*start)
-            end_date = dt.date(*end)
-            date = start_date
-            while date <= end_date:
-                datetuple = (date.year, date.month, date.day)
-                if not valid_date(datetuple):
-                    continue
-                yield datetuple
-                date += dt.timedelta(days=1)
-        case _:
-            print("Something is wrong with the arguments provided", start, end)
+def year_range(start: DateTuple, end: DateTuple) -> Generator[DateTuple, None, None]:
+    start_year, end_year = start[0], end[0]
+    yield from range(start_year, end_year + 1)
 
 
-def expand_date_range(date_range: str) -> list[DateTuple]:
-    dates = []
-    start, end = sorted(date_range.split(":"))
+def yearmonth_range(
+    start: DateTuple, end: DateTuple
+) -> Generator[DateTuple, None, None]:
+    start_year, start_month = start[:2]
+    end_year, end_month = end[:2]
+    for year in range(start_year, end_year + 1):
+        for month in range(1, 13):
+            if year == start_year and month < start_month:
+                continue
+            elif year == end_year and month > end_month:
+                continue
+            yield (year, month, None)
 
-    yearly_match = re.match(r"\d{4}:\d{4}", date_range)
-    monthly_match = re.match(r"\d{4}-\d{2}:\d{4}-\d{2}", date_range)
-    daily_match = re.match(r"\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}", date_range)
+
+def yearmonthday_range(
+    start: DateTuple, end: DateTuple
+) -> Generator[DateTuple, None, None]:
+    start_date = dt.date(*start)
+    end_date = dt.date(*end)
+    date = start_date
+    while date <= end_date:
+        datetuple = (date.year, date.month, date.day)
+        if valid_date(datetuple):
+            yield datetuple
+        date += dt.timedelta(days=1)
+
+
+def expand_str_date_range(str_date_range: str) -> Generator[DateTuple, None, None]:
+    start, end = sorted(str_date_range.split(":"))
+
+    yearly_match = re.match(r"\d{4}:\d{4}", str_date_range)
+    monthly_match = re.match(r"\d{4}-\d{2}:\d{4}-\d{2}", str_date_range)
+    daily_match = re.match(r"\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}", str_date_range)
 
     if yearly_match:
-        start, end = int(start), int(end)
-        dates.extend([(year, None, None) for year in range(start, end + 1)])
+        start_year, end_year = int(start), int(end)
+        yield from year_range(start_year, end_year)
     elif monthly_match:
         start_year, start_month = start.split("-")
         end_year, end_month = end.split("-")
-        start_year, start_month = int(start_year), int(start_month)
-        end_year, end_month = int(end_year), int(end_month)
-        for year in range(start_year, end_year + 1):
-            for month in range(1, 13):
-                if month < start_month and year == start_year:
-                    continue
-                elif month > end_month and year == end_year:
-                    continue
-                dates.append((year, month, None))
+        start_yearmonth = (int(start_year), int(start_month), None)
+        end_yearmonth = (int(end_year), int(end_month), None)
+        yield from yearmonth_range(start_yearmonth, end_yearmonth)
     elif daily_match:
-        start_date = dt.datetime.strptime(start, "%Y-%m-%d").date()
-        end_date = dt.datetime.strptime(end, "%Y-%m-%d").date()
-        date = start_date
-        while date <= end_date:
-            dates.append((date.year, date.month, date.day))
-            date += dt.timedelta(days=1)
-    return dates
+        start_date = tuple(int(i) for i in start.split("-"))
+        end_date = tuple(int(i) for i in end.split("-"))
+        yield from yearmonthday_range(start_date, end_date)
 
 
 def parse_dates(dates_string: str) -> list[DateTuple]:
     if ":" in dates_string:
-        return expand_date_range(dates_string)
+        return list(expand_str_date_range(dates_string))
     tz = dt.timezone(dt.timedelta(hours=-3))
     if dates_string == "today":
         now = dt.datetime.now(tz)
