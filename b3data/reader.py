@@ -1,7 +1,6 @@
 """Read B3's data files."""
 
 from importlib import resources
-
 from pathlib import Path
 from typing import Any
 
