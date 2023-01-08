@@ -1,5 +1,8 @@
 import datetime as dt
 import re
+from typing import Generator
+
+from dateutil.relativedelta import relativedelta
 
 DateTuple = tuple[int]
 
@@ -77,6 +80,40 @@ def valid_date(datetuple: DateTuple) -> bool:
     is_workday = weekday != 5 and weekday != 6
     is_holiday = any(date == holiday for holiday in get_year_holidays(year))
     return is_workday and not is_holiday
+
+
+def date_range(start: DateTuple, end: DateTuple) -> Generator[DateTuple, None, None]:
+    match start, end:
+        case (int(), None, None), (int(), None, None):  # dates are yearly
+            start_date = dt.date(start[0], 1, 1)
+            end_date = dt.date(end[0], 1, 1)
+            date = start_date
+            while date <= end_date:
+                datetuple = (date.year, None, None)
+                yield datetuple
+                date += dt.timedelta(year=1)
+
+        case (int(), int(), None), (int(), int(), None):  # dates are monthly
+            start_date = dt.date(start[0], start[1], 1)
+            end_date = dt.date(end[0], end[1], 1)
+            date = start_date
+            while date <= end_date:
+                datetuple = (date.year, date.month, None)
+                yield datetuple
+                date += relativedelta(months=+1)
+
+        case (int(), int(), int()), (int(), int(), int()):  # dates are daily
+            start_date = dt.date(*start)
+            end_date = dt.date(*end)
+            date = start_date
+            while date <= end_date:
+                datetuple = (date.year, date.month, date.day)
+                if not valid_date(datetuple):
+                    continue
+                yield datetuple
+                date += dt.timedelta(days=1)
+        case _:
+            print("Something is wrong with the arguments provided", start, end)
 
 
 def expand_date_range(date_range: str) -> list[DateTuple]:
