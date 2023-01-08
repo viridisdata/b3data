@@ -4,6 +4,20 @@ import re
 DateTuple = tuple[int]
 
 
+def get_year_holidays(year: int) -> dt.date:
+    brazilian_holidays = (
+        dt.date(year, 1, 1),  # 1 de janeiro (Ano novo)
+        dt.date(year, 4, 21),  # 21 de abril (Tiradentes)
+        dt.date(year, 5, 1),  # 1 de maio (Dia do Trabalhador)
+        dt.date(year, 9, 7),  # 7 de setembro (Dia da Independência)
+        dt.date(year, 10, 12),  # 12 de outubro (Nossa Senhora Aparecida)
+        dt.date(year, 11, 2),  # 2 de novembro (Dia do Finados)
+        dt.date(year, 11, 15),  # 15 de novembro (Proclamação da República)
+        dt.date(year, 12, 25),  # 25 de dezembro (Natal)
+    )
+    return brazilian_holidays
+
+
 def carnaval_date(year: int) -> tuple[dt.date]:
     # https://www.vivaolinux.com.br/script/Calcular-a-data-do-Carnaval-e-da-Pascoa
     x = 24
@@ -61,17 +75,7 @@ def valid_date(datetuple: DateTuple) -> bool:
     date = dt.date(year, month, day)
     weekday = date.weekday()
     is_workday = weekday != 5 and weekday != 6
-    brazillian_holidays = (
-        dt.date(year, 1, 1),  # 1 de janeiro (Ano novo)
-        dt.date(year, 4, 21),  # 21 de abril (Tiradentes)
-        dt.date(year, 5, 1),  # 1 de maio (Dia do Trabalhador)
-        dt.date(year, 9, 7),  # 7 de setembro (Dia da Independência)
-        dt.date(year, 10, 12),  # 12 de outubro (Nossa Senhora Aparecida)
-        dt.date(year, 11, 2),  # 2 de novembro (Dia do Finados)
-        dt.date(year, 11, 15),  # 15 de novembro (Proclamação da República)
-        dt.date(year, 12, 25),  # 25 de dezembro (Natal)
-    )
-    is_holiday = any(date == holiday for holiday in brazillian_holidays)
+    is_holiday = any(date == holiday for holiday in get_year_holidays(year))
     return is_workday and not is_holiday
 
 
