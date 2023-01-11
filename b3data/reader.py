@@ -53,25 +53,25 @@ def read_data(filepath: Path, rename_columns: bool = False) -> pd.DataFrame:
     return df
 
 
-def read_registro00():
+def read_registro00() -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "registro00.csv") as filepath:
         df = pd.read_csv(filepath)
     return df
 
 
-def read_registro01():
+def read_registro01() -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "registro01.csv") as filepath:
         df = pd.read_csv(filepath)
     return df
 
 
-def read_registro99():
+def read_registro99() -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "registro99.csv") as filepath:
         df = pd.read_csv(filepath)
     return df
 
 
-def read_codbdi(rename_columns: bool = False):
+def read_codbdi(rename_columns: bool = False) -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "codbdi.csv") as filepath:
         df = pd.read_csv(filepath)
     if rename_columns:
@@ -84,7 +84,7 @@ def read_codbdi(rename_columns: bool = False):
     return df
 
 
-def read_especi(rename_columns: bool = False):
+def read_especi(rename_columns: bool = False) -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "especi.csv") as filepath:
         df = pd.read_csv(filepath)
     if rename_columns:
@@ -97,7 +97,7 @@ def read_especi(rename_columns: bool = False):
     return df
 
 
-def read_indopc(rename_columns: bool = False):
+def read_indopc(rename_columns: bool = False) -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "indopc.csv") as filepath:
         df = pd.read_csv(filepath)
     if rename_columns:
@@ -111,7 +111,7 @@ def read_indopc(rename_columns: bool = False):
     return df
 
 
-def read_tpmerc(rename_columns: bool = False):
+def read_tpmerc(rename_columns: bool = False) -> pd.DataFrame:
     with resources.path("b3data.auxiliary_tables", "tpmerc.csv") as filepath:
         df = pd.read_csv(filepath)
     if rename_columns:
