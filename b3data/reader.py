@@ -26,7 +26,7 @@ def _remove_text_extra_spaces(s: pd.Series) -> pd.Series:
 def read_data(filepath: Path, rename_columns: bool = False) -> pd.DataFrame:
     registro01 = read_registro01()
     NAMES = registro01["NOME DO CAMPO"]
-    WIDTHS = registro01["POS. FINAL"] - registro01["POS. INIC."] + 1
+    WIDTHS = (registro01["POS. FINAL"] - registro01["POS. INIC."]) + 1
     df = pd.read_fwf(
         filepath,
         compression="zip",
@@ -38,11 +38,10 @@ def read_data(filepath: Path, rename_columns: bool = False) -> pd.DataFrame:
         parse_dates=["DATA", "DATVEN"],
     )
     df = df.assign(
-        data_vencimento=_parse_data_vencimento(df["DATVEN"]),
-        prazo=df["PRAZOT"].apply(_to_float),
-        especificacao=_remove_text_extra_spaces(df["ESPECI"]),
+        DATVEN=_parse_data_vencimento(df["DATVEN"]),
+        PRAZOT=df["PRAZOT"].apply(_to_float),
+        ESPECI=_remove_text_extra_spaces(df["ESPECI"]),
     )
-    df = df.drop(columns=["TIPREG"])
     if rename_columns:
         names = {
             a: b
