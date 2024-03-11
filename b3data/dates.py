@@ -3,8 +3,6 @@ import re
 from functools import lru_cache
 from typing import Generator
 
-from dateutil.relativedelta import relativedelta
-
 DateTuple = tuple[int]
 
 
