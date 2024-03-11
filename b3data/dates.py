@@ -117,9 +117,12 @@ def yearmonthday_range(
 def expand_str_date_range(str_date_range: str) -> Generator[DateTuple, None, None]:
     start, end = sorted(str_date_range.split(":"))
 
-    yearly_match = re.match(r"\d{4}:\d{4}", str_date_range)
-    monthly_match = re.match(r"\d{4}-\d{2}:\d{4}-\d{2}", str_date_range)
-    daily_match = re.match(r"\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}", str_date_range)
+    yearly_pattern = r"\d{4}:\d{4}"
+    monthly_pattern = r"\d{4}-\d{2}:\d{4}-\d{2}"
+    daily_pattern = r"\d{4}-\d{2}-\d{2}:\d{4}-\d{2}-\d{2}"
+    yearly_match = re.match(yearly_pattern, str_date_range)
+    monthly_match = re.match(monthly_pattern, str_date_range)
+    daily_match = re.match(daily_pattern, str_date_range)
 
     if yearly_match:
         start_year, end_year = int(start), int(end)
