@@ -1,6 +1,6 @@
 import datetime as dt
 from pathlib import Path
-from typing import Iterable
+from typing import Generator, Iterable
 
 import httpx
 
@@ -104,16 +104,17 @@ def fetch_dates(
     dates: Iterable[tuple[int | None]],
     output: Path,
     http_headers: dict[str, str] = None,
-):
+) -> Generator[Path, None, None]:
     """Fetch a list of data files based on `dates` iterable"""
     client = httpx.Client(headers=http_headers, verify=False)
     for date in dates:
         try:
-            fetch_data_file(
+            filepath = fetch_data_file(
                 datadir=output,
                 datetuple=date,
                 client=client,
             )
+            yield filepath
         except ValueError:
             print(f"Invalid date: {date}")
         except httpx.HTTPStatusError:
