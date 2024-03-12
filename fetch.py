@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 
-from b3data.dates import parse_dates
-from b3data.fetcher import fetch_dates
+from b3data.historic.dates import parse_dates
+from b3data.historic.fetcher import fetch_dates
 
 
 def get_args():

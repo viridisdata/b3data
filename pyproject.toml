@@ -3,22 +3,24 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "b3data"
-description = "Coletor de dados de cotação histórica da B3"
+name = "b3data-historic"
+description = "B3's historical quotes data downloader"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
+license = {file = "LICENSE"}
 keywords = []
 authors = [
   { name = "Daniel Komesu", email = "danielkomesu@gmail.com" },
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: Implementation :: CPython",
-  "Programming Language :: Python :: Implementation :: PyPy",
+  "Operating System :: OS Independent",
 ]
 dependencies = [
   "httpx",
@@ -28,9 +30,9 @@ dependencies = [
 dynamic = ["version"]
 
 [project.urls]
-Documentation = "https://github.com/data-arq/b3-cotacaohistorica-fetcher#readme"
-Issues = "https://github.com/data-arq/b3-cotacaohistorica-fetcher/issues"
-Source = "https://github.com/data-arq/b3-cotacaohistorica-fetcher"
+Documentation = "https://github.com/dankkom/b3data-historic#readme"
+Issues = "https://github.com/dankkom/b3data-historic/issues"
+Source = "https://github.com/dankkom/b3data-historic"
 
 [tool.hatch.version]
-path = "b3data/__init__.py"
+path = "src/b3data/historic/__init__.py"
